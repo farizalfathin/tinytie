@@ -59,7 +59,6 @@ export default function Posting({
   like,
   comment,
   caption,
-  date,
 }: {
   user: {
     name: string;
@@ -70,7 +69,6 @@ export default function Posting({
   like: number;
   comment: number;
   caption: string;
-  date: string;
 }) {
   return (
     <div className="w-full flex flex-col">
@@ -103,7 +101,7 @@ export default function Posting({
           </button>
         </div>
         <BottomDrawer
-          triggerCom={
+          componentTrigger={
             <button className="text-xs underline hover:text-primary-500 cursor-pointer">
               view who likes
             </button>
