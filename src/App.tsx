@@ -1,9 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
-import ContactUs from "./pages/contactus";
-import TermsOfService from "./pages/termsofservice";
-import PrivacyPolicy from "./pages/privacypolicy";
+import ContactUs from "./pages/contact-us";
+import TermsOfService from "./pages/terms-of-service";
+import PrivacyPolicy from "./pages/privacy-policy";
 import Account from "./pages/account";
+import DetailPost from "./pages/detail-post";
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
       <Route path="/contact" element={<ContactUs />} />
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      <Route path="/account" element={<Account />} />
+      <Route path="/account/me" element={<Account />} />
+      <Route path="/post/:id" element={<DetailPost />} />
     </Routes>
   );
 }

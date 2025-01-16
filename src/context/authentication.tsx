@@ -13,6 +13,7 @@ interface AuthContext {
   user: User | null;
   isAuth: boolean;
   onLoginWithGoogle: () => Promise<void>;
+  onLogout: () => Promise<void>;
 }
 
 const authContext = createContext<AuthContext | null>(null);
@@ -89,8 +90,22 @@ export default function AuthenticationProvider({
     }
   };
 
+  const onLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error("Error during logout:", error.message);
+        return;
+      }
+      console.log("User logged out successfully");
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  };
+
   return (
-    <authContext.Provider value={{ user, isAuth, onLoginWithGoogle }}>
+    <authContext.Provider value={{ user, isAuth, onLoginWithGoogle, onLogout }}>
       {children}
     </authContext.Provider>
   );

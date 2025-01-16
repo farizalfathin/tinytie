@@ -6,6 +6,8 @@ import HoverTooltip from "./templates/HoverTooltip";
 import { BottomDrawer } from "./templates/BottomDrawer";
 import RenderList from "./others/RenderList";
 import { DrawerHeader, DrawerTitle } from "./ui/drawer";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/context/authentication";
 
 type DataFriend = {
   name: string;
@@ -54,41 +56,48 @@ const dataFriend: DataFriend[] = [
 ];
 
 export default function Posting({
-  user,
+  users,
   image,
-  like,
-  comment,
+  like = 0,
+  comment = 0,
   caption,
 }: {
-  user: {
-    name: string;
-    avatar: string;
+  users: {
+    id: string;
+    username: string;
+    avatar_url: string;
     fallback: string;
   };
   image: string;
-  like: number;
-  comment: number;
+  like?: number;
+  comment?: number;
   caption: string;
 }) {
+  const { user } = useAuth();
+
   return (
     <div className="w-full flex flex-col">
       <div className="flex items-center gap-2 border border-secondary-200 px-2 py-1">
         <Avatar className="h-8 w-8 rounded-full border border-primary-300">
-          <AvatarImage src={user.avatar} alt={user.name} />
+          <AvatarImage src={users.avatar_url} alt={users.username} />
           <AvatarFallback className="rounded-full">
-            {user.fallback}
+            {users.fallback}
           </AvatarFallback>
         </Avatar>
-        <span className="text-sm underline">{user.name}</span>
+        <Link
+          to={users.id === user?.id ? "/account/me" : `/account/${users.id}`}
+          className="text-sm underline">
+          {users.username}
+        </Link>
       </div>
       <div className="border-x border-secondary-200">
         <img
           src={image}
-          alt={user.name}
+          alt={users.username}
           className="w-full aspect-square object-cover object-center"
         />
       </div>
-      <div className="p-2 border border-b-0 border-secondary-200">
+      <div className="p-2 pb-4 border border-b-0 border-secondary-200">
         <div className="flex gap-4 text-sm -mb-1">
           <HoverTooltip text={like}>
             <LikeButton />
@@ -123,7 +132,7 @@ export default function Posting({
                         {item.fallback}
                       </AvatarFallback>
                     </Avatar>
-                    <span>{user.name}</span>
+                    <span>{users.username}</span>
                   </div>
                 )}
               />
@@ -132,7 +141,8 @@ export default function Posting({
         </BottomDrawer>
         <div className="text-sm pe-2">
           <TruncateCapt>
-            <span className="font-semibold me-1">{user.name}</span> {caption}
+            <span className="font-semibold me-1">{users.username}</span>{" "}
+            {caption}
           </TruncateCapt>
         </div>
       </div>

@@ -22,7 +22,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/context/authentication";
 
 export function NavUser() {
-  const { user } = useAuth();
+  const { user, onLogout } = useAuth();
   const { isMobile } = useSidebar();
 
   return (
@@ -77,7 +77,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link to="/account">
+              <Link to="/account/me">
                 <DropdownMenuItem>
                   <UserRound />
                   Account
@@ -89,7 +89,9 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={onLogout}
+              className="focus:bg-red-500 focus:text-white">
               <LogOut />
               Log out
             </DropdownMenuItem>

@@ -117,9 +117,10 @@ const dataFriend: DataFriend[] = [
 ];
 
 type DataPosting = {
-  user: {
-    name: string;
-    avatar: string;
+  users: {
+    id: string;
+    username: string;
+    avatar_url: string;
     fallback: string;
   };
   image: string;
@@ -131,9 +132,10 @@ type DataPosting = {
 
 const dataPosting: DataPosting[] = [
   {
-    user: {
-      name: "yoichinagumo",
-      avatar:
+    users: {
+      id: "1",
+      username: "yoichinagumo",
+      avatar_url:
         "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/112fdda4-3732-4250-8e6d-af983aea1528/dffxj6r-3432fc5d-15fe-4b2c-8cf8-107bee34638a.jpg/v1/fill/w_894,h_894,q_70,strp/nagumo_from_sakamoto_days__by_nivet2006_dffxj6r-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcLzExMmZkZGE0LTM3MzItNDI1MC04ZTZkLWFmOTgzYWVhMTUyOFwvZGZmeGo2ci0zNDMyZmM1ZC0xNWZlLTRiMmMtOGNmOC0xMDdiZWUzNDYzOGEuanBnIiwid2lkdGgiOiI8PTEwODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.HD4Kqgp9Nu6Wg-rvnV1F774i0pw5cBJ1c3HA0EEJE8w",
       fallback: "YN",
     },
@@ -146,9 +148,10 @@ const dataPosting: DataPosting[] = [
     date: "",
   },
   {
-    user: {
-      name: "yoichinagumo",
-      avatar:
+    users: {
+      id: "2",
+      username: "yoichinagumo",
+      avatar_url:
         "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/112fdda4-3732-4250-8e6d-af983aea1528/dffxj6r-3432fc5d-15fe-4b2c-8cf8-107bee34638a.jpg/v1/fill/w_894,h_894,q_70,strp/nagumo_from_sakamoto_days__by_nivet2006_dffxj6r-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA4MCIsInBhdGgiOiJcL2ZcLzExMmZkZGE0LTM3MzItNDI1MC04ZTZkLWFmOTgzYWVhMTUyOFwvZGZmeGo2ci0zNDMyZmM1ZC0xNWZlLTRiMmMtOGNmOC0xMDdiZWUzNDYzOGEuanBnIiwid2lkdGgiOiI8PTEwODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.HD4Kqgp9Nu6Wg-rvnV1F774i0pw5cBJ1c3HA0EEJE8w",
       fallback: "YN",
     },

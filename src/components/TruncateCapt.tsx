@@ -10,8 +10,9 @@ export default function TruncateCapt({ children }: { children: ReactNode }) {
       const lineHeight = parseFloat(
         getComputedStyle(textRef.current).lineHeight
       );
-      const maxHeight = lineHeight * 4; // Maksimal tinggi untuk 5 baris
-      if (textRef.current.offsetHeight > maxHeight) {
+      const maxHeight = lineHeight * 4; // Maksimal tinggi untuk 4 baris
+      const actualHeight = textRef.current.scrollHeight;
+      if (actualHeight > maxHeight) {
         setIsTruncated(true);
       }
     }
