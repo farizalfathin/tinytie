@@ -44,7 +44,7 @@ export function NavSection({
                       New Post!
                     </DrawerTitle>
                     <Link
-                      to="/new"
+                      to="/new-post"
                       className="w-full flex items-center gap-1 py-1 px-2 rounded hover:bg-gradient-to-r hover:from-primary-100 hover:to-primary-200">
                       <Image />
                       <span className="font-mono">New Post</span>

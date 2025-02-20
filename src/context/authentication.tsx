@@ -1,3 +1,4 @@
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { User } from "@/types/user";
 import {
@@ -12,6 +13,7 @@ import {
 interface AuthContext {
   user: User | null;
   isAuth: boolean;
+  verifyUserId: (id: string) => Promise<void>;
   onLoginWithGoogle: () => Promise<void>;
   onLogout: () => Promise<void>;
 }
@@ -34,13 +36,17 @@ export default function AuthenticationProvider({
   const [user, setUser] = useState<User | null>(null);
   const [isAuth, setIsAuth] = useState<boolean>(false);
 
+  const { toast } = useToast();
+
   const verifyUserId = async (id: string) => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("users")
         .select("*")
         .eq("id", id)
         .single();
+
+      if (error) throw error;
 
       setUser({
         ...data,
@@ -54,17 +60,34 @@ export default function AuthenticationProvider({
     }
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getSession();
+
+      if (data?.session?.user?.id) {
+        verifyUserId(data?.session.user.id);
+        setIsAuth(true);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const verifyAuthStatus = useCallback(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "SIGNED_IN" && session?.user) {
+          if (!sessionStorage.getItem("userVerified")) {
+            verifyUserId(session.user.id);
+            sessionStorage.setItem("userVerified", "true");
+          }
           setIsAuth(true);
-          verifyUserId(session.user.id);
         }
 
         if (event === "SIGNED_OUT") {
           setIsAuth(false);
           setUser(null);
+          sessionStorage.removeItem("userVerified");
         }
       }
     );
@@ -78,15 +101,42 @@ export default function AuthenticationProvider({
     return () => authListener.subscription.unsubscribe();
   }, [verifyAuthStatus]);
 
+  useEffect(() => {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      toast({
+        title: "Login berhasil!",
+        description: "Akun anda berhasil terhubung. Selamat bersenang-senang!",
+        duration: 7000,
+      });
+    }
+
+    if (localStorage.getItem("isLoggedIn") === "false") {
+      toast({
+        title: "Logout berhasil!",
+        description: "Anda berhasil keluar dari akun anda!",
+        duration: 7000,
+      });
+    }
+
+    localStorage.removeItem("isLoggedIn");
+  }, []);
+
   const onLoginWithGoogle = async () => {
     try {
-      const { data }: any = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
       });
 
-      verifyUserId(data?.user.id);
+      if (error) throw error;
+
+      localStorage.setItem("isLoggedIn", "false");
     } catch (error) {
       console.log("Error saat login dengan Google:", error);
+      toast({
+        title: "Login gagal!",
+        description: "Anda gagal terhubung ke akun anda. Coba lagi nanti.",
+        duration: 7000,
+      });
     }
   };
 
@@ -94,18 +144,22 @@ export default function AuthenticationProvider({
     try {
       const { error } = await supabase.auth.signOut();
 
-      if (error) {
-        console.error("Error during logout:", error.message);
-        return;
-      }
-      console.log("User logged out successfully");
+      if (error) throw error;
+
+      localStorage.setItem("isLoggedIn", "true");
     } catch (error: any) {
-      throw new Error(error);
+      console.log("Error saat logout:", error);
+      toast({
+        title: "Logout gagal!",
+        description: "Anda gagal keluar dari akun anda. Coba lagi nanti.",
+        duration: 7000,
+      });
     }
   };
 
   return (
-    <authContext.Provider value={{ user, isAuth, onLoginWithGoogle, onLogout }}>
+    <authContext.Provider
+      value={{ user, isAuth, onLoginWithGoogle, onLogout, verifyUserId }}>
       {children}
     </authContext.Provider>
   );

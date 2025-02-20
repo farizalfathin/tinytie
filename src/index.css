@@ -4,41 +4,46 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Styling scrollbar untuk browser WebKit */
-body::-webkit-scrollbar {
-  width: 12px; /* Lebar scrollbar */
+/* body::-webkit-scrollbar {
+  width: 12px;
 }
 
-body::-webkit-scrollbar-track {
-  background: linear-gradient(180deg, #d9d9d9, #f8f8f8); /* Gradient track */
+*::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #d9d9d9, #f8f8f8);
   border-radius: 10px;
 }
 
-body::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #555555, #89909e); /* Gradient thumb */
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #555555, #89909e);
   border-radius: 10px;
-  border: 2px solid #f0f0f0; /* Memberikan efek border */
+  border: 2px solid #f0f0f0;
 }
 
-body::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #89909e, #555555); /* Hover efek */
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #89909e, #555555);
 }
 
-/* Styling scrollbar horizontal untuk elemen dengan class scroll-nav-friends */
 .scroll-nav-friends::-webkit-scrollbar {
-  height: 2px; /* Tinggi scrollbar */
+  height: 2px;
 }
 
 .scroll-nav-friends::-webkit-scrollbar-track {
-  background: linear-gradient(180deg, #d9d9d9, #f8f8f8); /* Gradient track */
+  background: linear-gradient(180deg, #d9d9d9, #f8f8f8);
   border-radius: 10px;
 }
 
 .scroll-nav-friends::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #555555, #89909e); /* Gradient thumb */
+  background: linear-gradient(45deg, #555555, #89909e);
   border-radius: 10px;
 }
 
+.scroll-following::-webkit-scrollbar, .scroll-comment::-webkit-scrollbar {
+  width: 12px;
+}
+
+textarea::-webkit-scrollbar {
+  width: 10px;
+} */
 
 @layer base {
   :root {

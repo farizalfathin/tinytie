@@ -1,60 +1,60 @@
-import Posting from "@/components/Posting";
-import LayoutSidebar from "@/components/templates/LayoutSidebar";
+import { Posting, PostingSkeleton } from "@/components/Posting";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/types/post";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function DetailPost() {
   const { id } = useParams();
+  const [status, setStatus] = useState<"loading" | "failed" | "success">(
+    "loading"
+  );
   const [post, setPost] = useState<Post>();
 
-  const fetchPosts = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*, users (id, username, full_name, avatar_url)")
-      .eq("id", id)
-      .single();
+  const fetchPosts = async () => {
+    if (!id) return;
+    setStatus("loading");
 
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*,users (id, username, full_name, avatar_url)")
+        .eq("id", id)
+        .single();
+
+      if (error)
+        throw new Error("error fetching detail post: " + error.message);
+
+      setPost({
+        ...data,
+        users: {
+          ...data.users,
+          fallback: data.users.full_name
+            .split(" ")
+            .map((word: any) => word[0])
+            .join(""),
+        },
+      });
+      setStatus("success");
+    } catch (error) {
       console.error(error);
-      return;
+      setStatus("failed");
     }
-
-    setPost({
-      ...data,
-      users: {
-        ...data.users,
-        fallback: data.users.full_name
-          .split(" ")
-          .map((word: any) => word[0])
-          .join(""),
-      },
-    });
-  }, []);
+  };
 
   useEffect(() => {
     fetchPosts();
-  }, [fetchPosts]);
+  }, [id]);
 
   return (
-    <LayoutSidebar>
-      <div className="flex justify-center shrink-0 ease-linear">
-        <div className="w-[468px] min-h-screen">
-          <Posting
-            users={
-              post?.users || {
-                id: "",
-                avatar_url: "",
-                fallback: "",
-                username: "",
-              }
-            }
-            image={post?.image || ""}
-            caption={post?.caption || ""}
-          />
-        </div>
+    <div className="flex justify-center shrink-0 ease-linear">
+      <div className="w-[468px] min-h-screen">
+        {status === "success" && post ? (
+          <Posting {...post} />
+        ) : (
+          <PostingSkeleton />
+        )}
       </div>
-    </LayoutSidebar>
+    </div>
   );
 }

@@ -1,3 +1,5 @@
+import { UserRelation } from "./user";
+
 export type Post = {
   id: string;
   created_at: Date;
@@ -5,10 +7,17 @@ export type Post = {
   caption: string;
   user_id: string;
   tag: string[];
-  users: {
-    id: string;
-    username: string;
-    fallback: string;
-    avatar_url: string;
-  };
+  users: UserRelation;
+};
+
+export type ImagePosting = {
+  id: string;
+  image: string;
+};
+
+export type Comment = {
+  id: string;
+  created_at: Date | string;
+  message: string;
+  users: UserRelation;
 };
