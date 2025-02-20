@@ -22,7 +22,7 @@ export default function Explore() {
   );
   const [posts, setPosts] = useState<{ id: string; image: string }[]>([]);
   const [offset, setOffset] = useState(0);
-  const [orderBy, setOrderBy] = useState<{ column: string; condition: any }>(
+  const [orderBy] = useState<{ column: string; condition: any }>(
     () => order[Math.floor(Math.random() * order.length)]
   );
   const hasFetched = useRef(false);
