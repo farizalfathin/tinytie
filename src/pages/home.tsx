@@ -1,6 +1,7 @@
 import RenderList from "@/components/others/RenderList";
-import AvatarFriend from "@/components/AvatarFriend";
 import { Posting, PostingSkeleton } from "@/components/Posting";
+import AvatarProfile from "@/components/templates/AvatarProfile";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type DataFriend = {
   name: string;
@@ -168,13 +169,25 @@ export default function Home() {
   return (
     <div className="flex justify-center shrink-0 ease-linear">
       <div className="w-[468px]">
-        <header className="flex gap-4 p-2 overflow-x-auto scroll-nav-friends">
-          <RenderList
-            of={dataFriend}
-            render={(item: DataFriend, index) => (
-              <AvatarFriend key={index} {...item} />
-            )}
-          />
+        <header>
+          <ScrollArea>
+            <div className="flex gap-4 px-2 py-3">
+              <RenderList
+                of={dataFriend}
+                render={(item: DataFriend, index) => (
+                  <div key={index}>
+                    <AvatarProfile
+                      avatar_url={item.avatar}
+                      fallback={item.fallback}
+                      className="size-12"
+                    />
+                    <span className="text-xs mx-auto">{item.name}</span>
+                  </div>
+                )}
+              />
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </header>
         <main className="flex flex-col mt-[1px]">
           <RenderList

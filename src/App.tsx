@@ -21,7 +21,7 @@ function App() {
     <>
       <AppSidebar />
       <SidebarInset>
-        <ScrollArea className="min-h-screen">
+        <ScrollArea className="min-h-screen overflow-y-auto">
           <Routes>
             <Route element={<ProtectedPage />}>
               <Route path="/" element={<Home />} />

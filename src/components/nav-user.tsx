@@ -20,12 +20,13 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/authentication";
+import AvatarProfile from "./templates/AvatarProfile";
 
 export function NavUser() {
   const { user, onLogout } = useAuth();
   const { isMobile } = useSidebar();
 
-  if (!user) return;
+  if (!user) return null;
 
   return (
     <SidebarMenu>
@@ -35,12 +36,11 @@ export function NavUser() {
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar_url} alt={user.username} />
-                <AvatarFallback className="rounded-lg">
-                  {user.fallback}
-                </AvatarFallback>
-              </Avatar>
+              <AvatarProfile
+                avatar_url={user.avatar_url}
+                fallback={user.fallback}
+                rounded="half"
+              />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.full_name}</span>
                 <span className="truncate text-xs">{user.email}</span>

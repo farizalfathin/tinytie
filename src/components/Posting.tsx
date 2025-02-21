@@ -1,5 +1,4 @@
 import { Send } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import TruncateCapt from "./TruncateCapt";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/authentication";
@@ -10,6 +9,7 @@ import { formatDate } from "@/utils/format";
 import SettingPost from "./SettingPost";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import AvatarProfile from "./templates/AvatarProfile";
 
 export function Posting({
   id,
@@ -67,12 +67,10 @@ export function Posting({
   return (
     <div className="w-full flex flex-col">
       <div className="flex items-center gap-2 border border-b-0 border-zinc-200 px-2 py-1">
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={users.avatar_url} alt={users.username} />
-          <AvatarFallback className="text-sm rounded-full">
-            {users.fallback}
-          </AvatarFallback>
-        </Avatar>
+        <AvatarProfile
+          avatar_url={users.avatar_url}
+          fallback={users.fallback}
+        />
         <div className="flex flex-col">
           <Link
             to={users.id === user?.id ? "/account/me" : `/account/${users.id}`}

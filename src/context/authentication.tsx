@@ -110,14 +110,6 @@ export default function AuthenticationProvider({
       });
     }
 
-    if (localStorage.getItem("isLoggedIn") === "false") {
-      toast({
-        title: "Logout berhasil!",
-        description: "Anda berhasil keluar dari akun anda!",
-        duration: 7000,
-      });
-    }
-
     localStorage.removeItem("isLoggedIn");
   }, []);
 
@@ -129,7 +121,7 @@ export default function AuthenticationProvider({
 
       if (error) throw error;
 
-      localStorage.setItem("isLoggedIn", "false");
+      localStorage.setItem("isLoggedIn", "true");
     } catch (error) {
       console.log("Error saat login dengan Google:", error);
       toast({
@@ -146,7 +138,11 @@ export default function AuthenticationProvider({
 
       if (error) throw error;
 
-      localStorage.setItem("isLoggedIn", "true");
+      toast({
+        title: "Logout berhasil!",
+        description: "Anda berhasil keluar dari akun anda!",
+        duration: 7000,
+      });
     } catch (error: any) {
       console.log("Error saat logout:", error);
       toast({
