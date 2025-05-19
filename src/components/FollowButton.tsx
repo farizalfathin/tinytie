@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/authentication";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { UserRoundX } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -12,6 +13,7 @@ export default function FollowButton({
   setNewFollowed: (action: "increase" | "decrease") => void;
 }) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
   const fetchIsFollowing = async () => {
@@ -38,7 +40,15 @@ export default function FollowButton({
   }, [userIdFollowed, user]);
 
   const toggleFollow = async () => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Gagal mengikuti akun ini",
+        description:
+          "Anda harus login terlebih dahulu untuk mengikuti akun lain!",
+        duration: 5000,
+      });
+      return;
+    }
 
     if (isFollowing) {
       setIsFollowing(false);
@@ -75,19 +85,19 @@ export default function FollowButton({
   return !isFollowing ? (
     <button
       onClick={toggleFollow}
-      className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-full text-sm font-medium">
+      className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium">
       Follow
     </button>
   ) : (
     <div className="flex items-center gap-2 mt-4">
       <Link
         to="/chat"
-        className="px-4 py-2 bg-secondary-200 rounded text-sm font-medium hover:bg-secondary-300">
+        className="px-4 py-2 bg-secondary text-secondary-foreground rounded text-sm font-medium hover:bg-secondary/75">
         Kirim Pesan
       </Link>
       <button
         onClick={toggleFollow}
-        className="bg-secondary-200 rounded font-medium p-2 hover:bg-secondary-300">
+        className="bg-secondary text-secondary-foreground rounded font-medium p-2 hover:bg-secondary/75">
         <UserRoundX className="size-5" />
       </button>
     </div>

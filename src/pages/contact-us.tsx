@@ -1,8 +1,24 @@
+import { Helmet } from "react-helmet-async";
+
 export default function ContactUs() {
   return (
-    <div className="flex justify-center shrink-0 ease-linear py-4">
-      <div className="w-[468px]">
-        <main>
+    <>
+      <Helmet>
+        <title>Hubungi Kami - TinyTie</title>
+        <meta
+          name="description"
+          content="Hubungi tim TinyTie untuk kerjasama, laporan masalah, saran fitur, atau informasi kontak developer. Kami siap mendengar Anda."
+        />
+        <meta property="og:title" content="Hubungi Kami - TinyTie" />
+        <meta
+          property="og:description"
+          content="Hubungi tim TinyTie untuk kerjasama, laporan masalah, saran fitur, atau informasi kontak developer. Kami siap mendengar Anda."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tinytie.com/contact" />
+      </Helmet>
+      <div className="flex justify-center shrink-0 ease-linear">
+        <section className="w-full p-4">
           <div className="mb-4">
             <h2 className="text-lg font-medium">Introduksi</h2>
             <p>
@@ -34,8 +50,8 @@ export default function ContactUs() {
               mempermudah komunikasi: https://discord.gg/lahelu
             </p>
           </div>
-        </main>
+        </section>
       </div>
-    </div>
+    </>
   );
 }

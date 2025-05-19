@@ -6,3 +6,6 @@ export const formatDate = (data: Date | string): string =>
 
 export const formatTime = (data: Date | string): string =>
   format(data, "HH:mm", { locale: id });
+
+export const slicingText = (text: string, maxLength: number): string =>
+  text.length > maxLength ? text.slice(0, maxLength) + "..." : text;

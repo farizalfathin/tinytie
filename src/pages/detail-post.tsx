@@ -2,6 +2,7 @@ import { Posting, PostingSkeleton } from "@/components/Posting";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/types/post";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 
 export default function DetailPost() {
@@ -47,14 +48,40 @@ export default function DetailPost() {
   }, [id]);
 
   return (
-    <div className="flex justify-center shrink-0 ease-linear">
-      <div className="w-[468px] min-h-screen">
-        {status === "success" && post ? (
-          <Posting {...post} />
-        ) : (
-          <PostingSkeleton />
-        )}
+    <>
+      {status === "success" && post && (
+        <Helmet>
+          <title>
+            {post.users.username} di TinyTie: "{post.caption?.slice(0, 40)}"
+          </title>
+          <meta
+            name="description"
+            content={
+              post.caption?.length > 100
+                ? post.caption.slice(0, 100) + "..."
+                : post.caption || "Lihat detail postingan pengguna."
+            }
+          />
+          <meta
+            property="og:title"
+            content={`${post.users.username} membagikan postingan`}
+          />
+          <meta
+            property="og:description"
+            content={post.caption || "Lihat detail postingan pengguna."}
+          />
+          {post.image && <meta property="og:image" content={post.image} />}
+        </Helmet>
+      )}
+      <div className="flex-1 flex justify-center shrink-0 ease-linear">
+        <section className="w-full min-h-full">
+          {status === "success" && post ? (
+            <Posting {...post} />
+          ) : (
+            <PostingSkeleton />
+          )}
+        </section>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import { Send } from "lucide-react";
 import TruncateCapt from "./TruncateCapt";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/authentication";
@@ -9,7 +8,7 @@ import { formatDate } from "@/utils/format";
 import SettingPost from "./SettingPost";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import AvatarProfile from "./templates/AvatarProfile";
+import AvatarProfile from "./AvatarProfile";
 
 export function Posting({
   id,
@@ -36,7 +35,14 @@ export function Posting({
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    if (!id || users.id !== user?.id) return;
+    if (!id || users.id !== user?.id) {
+      toast({
+        title: "Postingan anda gagal dihapus",
+        description: "Anda tidak memiliki akses untuk menghapus postingan ini!",
+        duration: 5000,
+      });
+      return;
+    }
     const imageTarget = image.split("/").pop();
 
     try {
@@ -61,12 +67,18 @@ export function Posting({
       }, 2000);
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Postingan anda gagal dihapus",
+        description:
+          "Anda akan gagal menghapus postingan anda. Coba lagi nanti",
+        duration: 5000,
+      });
     }
   };
 
   return (
     <div className="w-full flex flex-col">
-      <div className="flex items-center gap-2 border border-b-0 border-zinc-200 px-2 py-1">
+      <div className="flex items-center gap-2 border border-y-0 border-border px-3 py-2">
         <AvatarProfile
           avatar_url={users.avatar_url}
           fallback={users.fallback}
@@ -74,10 +86,10 @@ export function Posting({
         <div className="flex flex-col">
           <Link
             to={users.id === user?.id ? "/account/me" : `/account/${users.id}`}
-            className="text-sm select-none hover:text-primary-800">
+            className="text-sm select-none hover:text-primary hover:underline">
             {users.username}
           </Link>
-          <span className="text-[10px] text-secondary-500">
+          <span className="text-[10px] text-muted-foreground">
             {formatDate(created_at)}
           </span>
         </div>
@@ -87,20 +99,17 @@ export function Posting({
           handleDelete={handleDelete}
         />
       </div>
-      <div className="">
+      <div className="border border-border">
         <img
           src={image}
           alt={users.username}
           className="w-full aspect-square object-cover object-center select-none"
         />
       </div>
-      <div className="p-2 pb-4 border border-y-0 border-secondary-200">
+      <div className="p-2 pb-4 border border-t-0 border-border">
         <div className="flex gap-4 text-sm">
           <LikeButton postId={id} />
           <CommentButton postId={id} />
-          <button>
-            <Send />
-          </button>
         </div>
         <ViewLikes postId={id} />
         <div className="text-sm pe-2">
@@ -109,14 +118,14 @@ export function Posting({
               to={
                 users.id === user?.id ? "/account/me" : `/account/${users.id}`
               }
-              className="font-semibold select-none me-1 hover:text-primary-800">
+              className="font-semibold select-none me-1 hover:text-primary hover:underline">
               {users.username}
             </Link>
             {caption}
           </TruncateCapt>
           <div className="flex gap-2 mt-2">
             {tag?.map((t, i) => (
-              <span key={i} className="text-sm text-primary-500 underline">
+              <span key={i} className="text-sm text-primary underline">
                 #{t}
               </span>
             ))}
@@ -130,14 +139,14 @@ export function Posting({
 export function PostingSkeleton() {
   return (
     <div className="w-full flex flex-col">
-      <div className="flex items-center gap-2 border border-secondary-200 px-2 py-1">
+      <div className="flex items-center gap-2 border border-border px-2 py-1">
         <Skeleton className="w-8 h-8 rounded-full" />
         <Skeleton className="w-28 h-4 rounded-sm" />
       </div>
-      <div className="border-x border-secondary-200">
+      <div className="border-x border-border">
         <Skeleton className="w-full aspect-square rounded-none" />
       </div>
-      <div className="p-2 pb-8 border border-b-0 border-secondary-200">
+      <div className="p-2 pb-8 border border-b-0 border-border">
         <div className="flex gap-4 text-sm">
           <Skeleton className="w-7 h-7 rounded-full" />
           <Skeleton className="w-7 h-7 rounded-full" />

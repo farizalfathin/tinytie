@@ -1,8 +1,24 @@
+import { Helmet } from "react-helmet-async";
+
 export default function PrivacyPolicy() {
   return (
-    <div className="flex justify-center shrink-0 ease-linear py-4">
-      <div className="w-[468px]">
-        <main>
+    <>
+      <Helmet>
+        <title>Kebijakan Privasi - TinyTie</title>
+        <meta
+          name="description"
+          content="Pelajari bagaimana TinyTie mengumpulkan, menggunakan, dan melindungi informasi pribadi pengguna sesuai dengan kebijakan privasi kami."
+        />
+        <meta property="og:title" content="Kebijakan Privasi - TinyTie" />
+        <meta
+          property="og:description"
+          content="Pelajari bagaimana TinyTie mengumpulkan, menggunakan, dan melindungi informasi pribadi pengguna sesuai dengan kebijakan privasi kami."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tinytie.com/privacy-policy" />
+      </Helmet>
+      <div className="flex justify-center shrink-0 ease-linear">
+        <section className="w-full p-4">
           <div className="mb-4">
             <h2 className="text-lg font-medium">Introduksi</h2>
             <p>
@@ -73,8 +89,8 @@ export default function PrivacyPolicy() {
               informasi pribadi kepada kami.
             </p>
           </div>
-        </main>
+        </section>
       </div>
-    </div>
+    </>
   );
 }

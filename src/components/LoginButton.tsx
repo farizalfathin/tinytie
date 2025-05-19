@@ -10,6 +10,7 @@ import {
 } from "./ui/drawer";
 import { AudioWaveform } from "lucide-react";
 import { Button } from "./ui/button";
+import { Card, CardContent, CardDescription } from "./ui/card";
 
 export default function LoginButton() {
   const { onLoginWithGoogle, isAuth } = useAuth();
@@ -18,18 +19,17 @@ export default function LoginButton() {
 
   return (
     <Drawer>
-      <div className="bg-secondary-200 flex flex-col items-center text-center py-2 mx-2 rounded-lg group-data-[collapsible=icon]:hidden">
-        <span className="text-xs font-medium mb-2">
-          Wanna feels better experience?
-          <br />
-          Login with Google
-        </span>
-        <DrawerTrigger asChild>
-          <button className="bg-primary-500 text-white font-medium px-3 py-1 rounded-full cursor-pointer">
-            Login
-          </button>
-        </DrawerTrigger>
-      </div>
+      <Card className="mx-2 group-data-[collapsible=icon]:hidden">
+        <CardContent className="p-2 text-center flex flex-col gap-3 items-center">
+          <CardDescription>
+            Wanna feels better experience? <br />
+            Login with Google
+          </CardDescription>
+          <DrawerTrigger asChild>
+            <Button>Login</Button>
+          </DrawerTrigger>
+        </CardContent>
+      </Card>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader className="flex flex-col items-center">
@@ -42,9 +42,7 @@ export default function LoginButton() {
             </DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>
-            <Button
-              onClick={onLoginWithGoogle}
-              className="bg-primary-500 hover:bg-primary-700">
+            <Button onClick={onLoginWithGoogle} className="hover:bg-primary/85">
               <img
                 className="size-6 rounded-full bg-white"
                 src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"

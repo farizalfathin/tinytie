@@ -3,12 +3,13 @@ import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send } from "lucide-react";
+import { Send, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/authentication";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { formatTime } from "@/utils/format";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Message {
   id: string;
@@ -32,6 +33,7 @@ export default function Chat() {
   const [newMessage, setNewMessage] = useState("");
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
   const [selectedChat, setSelectedChat] = useState<ChatUser | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const getChatUsers = async () => {
@@ -143,38 +145,52 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className={cn("flex h-full", !isMobile && "h-screen")}>
       {/* Sidebar Chat List */}
-      <aside className="w-1/3 border-r border-zinc-200 pt-5">
-        <h2 className="text-xl font-semibold mb-4 ms-4">Chats</h2>
-        <ScrollArea className="h-[calc(100vh-80px)]">
-          {chatUsers.map((user, index) => (
-            <div
-              key={index}
-              onClick={() => setSelectedChat(user)}
-              className={`p-3 cursor-pointer ${
-                selectedChat?.id === user.id ? "bg-gray-100" : ""
-              }`}>
-              <div className="flex items-center gap-2">
-                <Avatar className="h-8 w-8 rounded-full">
-                  <AvatarImage src={user.avatar_url} alt={user.username} />
-                  <AvatarFallback className="rounded-full text-xs">
-                    {user.fallback}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="">{user.full_name}</span>
+      {(isMobile && !selectedChat) || !isMobile ? (
+        <aside
+          className={cn(
+            "border-r border-sidebar-border pt-5",
+            isMobile ? "w-full" : "w-1/3"
+          )}>
+          <h2 className="text-xl font-semibold mb-4 ms-4">Chats</h2>
+          <ScrollArea className="h-[calc(100vh-80px)]">
+            {chatUsers.map((user, index) => (
+              <div
+                key={index}
+                onClick={() => setSelectedChat(user)}
+                className={`p-3 cursor-pointer ${
+                  selectedChat?.id === user.id ? "bg-secondary" : ""
+                }`}>
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8 rounded-full">
+                    <AvatarImage src={user.avatar_url} alt={user.username} />
+                    <AvatarFallback className="rounded-full text-xs">
+                      {user.fallback}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="">{user.full_name}</span>
+                </div>
               </div>
-            </div>
-          ))}
-        </ScrollArea>
-      </aside>
+            ))}
+          </ScrollArea>
+        </aside>
+      ) : null}
 
       {/* Main Chat Area */}
-      <main className="w-2/3 flex flex-col">
-        {selectedChat ? (
-          <>
-            <header className="p-4 border-b border-zinc-200 font-semibold">
-              <div className="flex items-center gap-2">
+      {(isMobile && selectedChat) || !isMobile ? (
+        <main className={cn("flex flex-col", isMobile ? "w-full" : "w-2/3")}>
+          {selectedChat ? (
+            <>
+              <header className="p-4 border-b border-sidebar-border font-semibold flex items-center gap-2">
+                {isMobile && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSelectedChat(null)}>
+                    <ArrowLeft size={20} />
+                  </Button>
+                )}
                 <Avatar className="h-8 w-8 rounded-full">
                   <AvatarImage
                     src={selectedChat.avatar_url}
@@ -189,56 +205,57 @@ export default function Chat() {
                   className="hover:text-primary-500">
                   {selectedChat.full_name}
                 </Link>
-              </div>
-            </header>
-            <ScrollArea className="flex-1 p-4 space-y-2">
-              {chats.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={cn(
-                    "w-full flex justify-start",
-                    msg.sender_id === user?.id && "justify-end"
-                  )}>
-                  <div
-                    className={cn(
-                      "max-w-[60%] flex flex-col items-start py-2 px-3 rounded-lg bg-zinc-200 text-black",
-                      msg.sender_id === user?.id &&
-                        "bg-indigo-500 text-white items-end"
-                    )}>
-                    <p>{msg.content}</p>
-                    <span
-                      className={cn(
-                        "text-xs text-secondary-500",
-                        msg.sender_id === user?.id &&
-                          "text-secondary-200 text-end"
-                      )}>
-                      {formatTime(msg.created_at)}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </ScrollArea>
+              </header>
 
-            {/* Input Chat */}
-            <footer className="p-4 border-t border-zinc-200 flex gap-2">
-              <Input
-                type="text"
-                placeholder="Ketik pesan..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-1"
-              />
-              <Button onClick={sendMessage}>
-                <Send size={20} />
-              </Button>
-            </footer>
-          </>
-        ) : (
-          <div className="flex items-center justify-center flex-1 text-gray-500">
-            Pilih chat untuk memulai percakapan
-          </div>
-        )}
-      </main>
+              <ScrollArea className="flex-1 p-4 space-y-2">
+                {chats.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={cn(
+                      "w-full flex justify-start mb-1",
+                      msg.sender_id === user?.id && "justify-end"
+                    )}>
+                    <div
+                      className={cn(
+                        "max-w-[60%] flex flex-col items-start py-2 px-3 rounded-lg bg-secondary text-secondary-foreground",
+                        msg.sender_id === user?.id &&
+                          "bg-primary text-primary-foreground items-end"
+                      )}>
+                      <p>{msg.content}</p>
+                      <span
+                        className={cn(
+                          "text-xs text-secondary-500",
+                          msg.sender_id === user?.id &&
+                            "text-secondary-200 text-end"
+                        )}>
+                        {formatTime(msg.created_at)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </ScrollArea>
+
+              {/* Input Chat */}
+              <footer className="p-4 border-t border-sidebar-border flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Ketik pesan..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  className="flex-1"
+                />
+                <Button onClick={sendMessage}>
+                  <Send size={20} />
+                </Button>
+              </footer>
+            </>
+          ) : (
+            <div className="flex items-center justify-center flex-1 text-gray-500">
+              Pilih chat untuk memulai percakapan
+            </div>
+          )}
+        </main>
+      ) : null}
     </div>
   );
 }

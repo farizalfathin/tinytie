@@ -1,8 +1,9 @@
 import { ImagePost, ImagePostSkeleton } from "@/components/ImagePost";
-import LoaderSpinner from "@/components/others/LoaderSpinner";
+import LoaderSpinner from "@/components/LoaderSpinner";
 import RenderList from "@/components/others/RenderList";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const order = [
@@ -40,14 +41,16 @@ export default function Explore() {
 
       if (error) throw new Error("error fetching data posts: " + error);
 
-      if (data.length === 0) {
-        setHasMore(false);
-      } else {
-        setPosts((prevData) => [...prevData, ...data]); // Tambahkan data baru
-      }
+      setTimeout(() => {
+        if (data.length === 0) {
+          setHasMore(false);
+        } else {
+          setPosts((prevData) => [...prevData, ...data]);
+        }
 
-      setOffset((prevOffset) => prevOffset + data.length); // Update offset berdasarkan data yang didapat
-      if (!isLoadMore) setStatus("success");
+        setOffset((prevOffset) => prevOffset + data.length);
+        if (!isLoadMore) setStatus("success");
+      }, 2000);
     } catch (error) {
       console.error(error);
       if (!isLoadMore) setStatus("failed");
@@ -61,39 +64,53 @@ export default function Explore() {
   }, []);
 
   return (
-    <div className="flex justify-center shrink-0 ease-linear">
-      <div className="w-full max-w-[548px] min-h-screen border border-secondary-200">
-        {status === "loading" ? (
-          <div className="grid grid-cols-3">
-            {Array.from({ length: 12 }).map((_, index) => (
-              <ImagePostSkeleton key={index} />
-            ))}
-          </div>
-        ) : (
-          <InfiniteScroll
-            className="relative pb-16 grid grid-cols-3"
-            dataLength={posts.length}
-            next={() => fetchPosts(true)}
-            hasMore={hasMore}
-            loader={
-              <div className="absolute bottom-0 w-full h-16 flex justify-center items-center">
-                <LoaderSpinner />
-              </div>
-            }
-            endMessage={
-              <div className="absolute bottom-0 w-full h-16 flex justify-center items-center">
-                <b>Yay! You have seen it all</b>
-              </div>
-            }>
-            <RenderList
-              of={posts}
-              render={(item: { id: string; image: string }, index) => (
-                <ImagePost key={index} {...item} />
-              )}
-            />
-          </InfiniteScroll>
-        )}
+    <>
+      <Helmet>
+        <title>Explore Posts | TinyTie</title>
+        <meta
+          name="description"
+          content="Lihat dan jelajahi berbagai postingan gambar yang diunggah oleh pengguna dari seluruh platform."
+        />
+        <meta property="og:title" content="Jelajahi Postingan" />
+        <meta
+          property="og:description"
+          content="Temukan beragam konten menarik yang dibagikan oleh pengguna di halaman Explore."
+        />
+      </Helmet>
+      <div className="flex h-full justify-center shrink-0 ease-linear">
+        <div className="w-full max-w-lg border border-border">
+          {status === "loading" ? (
+            <div className="grid grid-cols-3">
+              {Array.from({ length: 12 }).map((_, index) => (
+                <ImagePostSkeleton key={index} className="h-52 md:h-auto" />
+              ))}
+            </div>
+          ) : (
+            <InfiniteScroll
+              className="relative pb-16 grid grid-cols-3"
+              dataLength={posts.length}
+              next={() => fetchPosts(true)}
+              hasMore={hasMore}
+              loader={
+                <div className="absolute bottom-0 w-full h-16 flex justify-center items-center">
+                  <LoaderSpinner />
+                </div>
+              }
+              endMessage={
+                <div className="absolute bottom-0 w-full h-16 flex justify-center items-center">
+                  <b>Yay! You have seen it all</b>
+                </div>
+              }>
+              <RenderList
+                of={posts}
+                render={(item: { id: string; image: string }, index) => (
+                  <ImagePost key={index} {...item} className="h-52 md:h-auto" />
+                )}
+              />
+            </InfiniteScroll>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

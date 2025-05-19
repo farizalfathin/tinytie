@@ -20,14 +20,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/authentication";
-import { cn } from "@/lib/utils";
 import { v4 as uuid } from "uuid";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Helmet } from "react-helmet-async";
 
 const addNewPostFormSchema = z.object({
   image: z.any().refine((file) => file instanceof File, {
-    message: "Data harus berupa file",
+    message: "Data file harus disertakan",
   }),
   caption: z.string().min(8, "caption minimal harus 8 karakter"),
   tag: z.array(z.string().min(1, "Tag minimal harus 1 karakter")).default([]),
@@ -125,178 +126,187 @@ export default function NewPost() {
   };
 
   return (
-    <div className="flex justify-center shrink-0 ease-linear">
-      <div className="w-full max-w-[468px] min-h-screen border border-secondary-200">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(addNewPost)}>
-            <div className="flex items-center justify-center py-3 border-b border-secondary-200">
-              <h1 className="text-lg font-semibold italic">New Post</h1>
-            </div>
-            <div className="p-4">
-              <div className="flex gap-3">
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center">
-                        <input
-                          id="image"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              field.onChange(file); // Set file value in the form
-                              setPreviewImage(URL.createObjectURL(file)); // Update preview avatar
-                            }
-                          }}
-                        />
-                        <label
-                          htmlFor="image"
-                          className="relative w-28 h-28 group">
-                          {previewImage ? (
-                            <>
-                              <img
-                                src={previewImage}
-                                alt=""
-                                className="w-full aspect-square rounded-md object-cover object-center"
-                              />
-                              <div className="absolute top-0 w-full aspect-square bg-black/40 flex-col justify-center items-center rounded-md hidden group-hover:flex">
-                                <UploadCloud className="size-8 text-white" />
-                                <span className="text-sm text-white">
-                                  Upload Image
-                                </span>
-                                <span className="text-[8px] text-white mb-1 italic">
-                                  Image's cropped to 1:1
-                                </span>
-                              </div>
-                            </>
-                          ) : (
-                            <div className="w-full aspect-square bg-secondary-200 flex flex-col justify-center items-center rounded-md">
-                              <UploadCloud className="size-8 text-secondary-500" />
-                              <span className="text-sm text-secondary-500">
-                                Upload Image
-                              </span>
-                              <span className="text-[8px] text-secondary-500 mb-1 italic">
-                                Image's cropped to 1:1
-                              </span>
-                            </div>
-                          )}
-                        </label>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="caption"
-                  render={({ field }) => (
-                    <FormItem className="w-full mt-2">
-                      <FormControl>
-                        <textarea
-                          className="w-full resize-none outline-none border-b border-b-secondary-200"
-                          rows={4}
-                          placeholder="Tulis caption menarik"
-                          {...field}></textarea>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+    <>
+      <Helmet>
+        <title>Buat Postingan Baru | TinyTie</title>
+        <meta
+          name="description"
+          content="Unggah gambar dan bagikan momen Anda kepada dunia melalui postingan baru di TinyTie."
+        />
+        <meta property="og:title" content="Buat Postingan Baru" />
+        <meta
+          property="og:description"
+          content="Unggah gambar dan bagikan momen Anda kepada dunia melalui postingan baru di TinyTie."
+        />
+      </Helmet>
+      <div className="flex-1 flex justify-center shrink-0 ease-linear overflow-y-hidden">
+        <section className="w-full h-full border border-b-0 border-border">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(addNewPost)}>
+              <div className="flex items-center justify-center py-3 border-b border-border">
+                <h1 className="text-lg font-semibold italic">New Post</h1>
               </div>
-              <div className="flex flex-col">
-                <FormField
-                  control={form.control}
-                  name="tag"
-                  render={({ field }) => (
-                    <FormItem className="w-full mt-2">
-                      <FormLabel className="font-medium text-lg">
-                        Hashtag
-                      </FormLabel>
-                      {Array.isArray(field.value) && field.value.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {field.value.map((tag, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center text-sm ps-2 pe-1 py-1 gap-2 rounded-full bg-primary-100">
-                              <span>{tag}</span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  form.setValue(
-                                    "tag",
-                                    field.value.filter((t) => t !== tag)
-                                  )
-                                }>
-                                <CircleX className="size-4 text-primary-500" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <FormControl>
-                        <div className="flex gap-4 pe-4">
+              <div className="p-4">
+                <div className="flex gap-3">
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center">
                           <input
-                            ref={tagRef}
-                            type="text"
-                            className="w-full outline-none border-b border-b-secondary-200 ps-1 pb-1"
-                            placeholder="Tambahkan tag (tekan Enter)"
-                            onChange={(
-                              e: React.FormEvent<HTMLInputElement>
-                            ) => {
-                              e.currentTarget.value =
-                                e.currentTarget.value.replace(/\s+/g, "-");
-                            }}
-                            onKeyDown={(
-                              e: React.KeyboardEvent<HTMLInputElement>
-                            ) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleAddTag();
+                            id="image"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                field.onChange(file); // Set file value in the form
+                                setPreviewImage(URL.createObjectURL(file)); // Update preview avatar
                               }
                             }}
                           />
-                          <button type="button" onClick={handleAddTag}>
-                            <CornerRightUp className="size-5" />
-                          </button>
+                          <label
+                            htmlFor="image"
+                            className="relative w-28 h-28 group">
+                            {previewImage ? (
+                              <>
+                                <img
+                                  src={previewImage}
+                                  alt=""
+                                  className="w-full aspect-square rounded-md object-cover object-center"
+                                />
+                                <div className="absolute top-0 w-full aspect-square bg-black/40 text-white flex-col justify-center items-center rounded-md hidden group-hover:flex">
+                                  <UploadCloud className="size-8" />
+                                  <span className="text-sm">Upload Image</span>
+                                  <span className="text-[8px] mb-1 italic">
+                                    Image's cropped to 1:1
+                                  </span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="w-full aspect-square bg-secondary flex flex-col justify-center items-center rounded-md">
+                                <UploadCloud className="size-8" />
+                                <span className="text-sm">Upload Image</span>
+                                <span className="text-[8px] mb-1 italic">
+                                  Image's cropped to 1:1
+                                </span>
+                              </div>
+                            )}
+                          </label>
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex justify-between items-bottom mt-4 pe-4">
-                  <div className="flex items-center gap-2">
-                    <BookOpenText className="size-5" />
-                    Ikuti Peraturan
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Link to="/terms-of-service">
-                      <SquareArrowOutUpRight className="size-5" />
-                    </Link>
-                    <input
-                      type="checkbox"
-                      className="size-4"
-                      onClick={() => setIsDisabled(!isDisabled)}
-                    />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="caption"
+                    render={({ field }) => (
+                      <FormItem className="w-full mt-2">
+                        <FormControl>
+                          <textarea
+                            className="w-full bg-transparent resize-none outline-none border-b"
+                            rows={4}
+                            placeholder="Tulis caption menarik"
+                            {...field}></textarea>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <FormField
+                    control={form.control}
+                    name="tag"
+                    render={({ field }) => (
+                      <FormItem className="w-full mt-2">
+                        <FormLabel className="font-medium text-lg">
+                          Hashtag
+                        </FormLabel>
+                        {Array.isArray(field.value) &&
+                          field.value.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {field.value.map((tag, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center text-sm ps-2 pe-1 py-1 gap-2 rounded-full bg-primary text-primary-foreground">
+                                  <span>{tag}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      form.setValue(
+                                        "tag",
+                                        field.value.filter((t) => t !== tag)
+                                      )
+                                    }>
+                                    <CircleX className="size-4" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        <FormControl>
+                          <div className="flex gap-4 pe-4">
+                            <input
+                              ref={tagRef}
+                              type="text"
+                              className="w-full bg-transparent outline-none border-b ps-1 pb-1"
+                              placeholder="Tambahkan tag (tekan Enter)"
+                              onChange={(
+                                e: React.FormEvent<HTMLInputElement>
+                              ) => {
+                                e.currentTarget.value =
+                                  e.currentTarget.value.replace(/\s+/g, "-");
+                              }}
+                              onKeyDown={(
+                                e: React.KeyboardEvent<HTMLInputElement>
+                              ) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  handleAddTag();
+                                }
+                              }}
+                            />
+                            <button type="button" onClick={handleAddTag}>
+                              <CornerRightUp className="size-5" />
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex justify-between items-bottom mt-4 pe-4">
+                    <div className="flex items-center gap-2">
+                      <BookOpenText className="size-5" />
+                      Ikuti Peraturan
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link to="/terms-of-service">
+                        <SquareArrowOutUpRight className="size-5" />
+                      </Link>
+                      <input
+                        type="checkbox"
+                        className="size-4"
+                        onClick={() => setIsDisabled(!isDisabled)}
+                      />
+                    </div>
                   </div>
                 </div>
+                <Button
+                  type="submit"
+                  disabled={isDisabled}
+                  className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90">
+                  Unggah
+                </Button>
               </div>
-              <button
-                type="submit"
-                disabled={isDisabled}
-                className={cn(
-                  "bg-gradient-to-br from-primary-500 to-primary-400 text-white px-3 py-1 rounded-md mt-4 hover:from-primary-400 hover:to-primary-500",
-                  isDisabled && "opacity-70 cursor-not-allowed"
-                )}>
-                Unggah
-              </button>
-            </div>
-          </form>
-        </Form>
+            </form>
+          </Form>
+        </section>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,11 +1,9 @@
-import { EllipsisVertical, Settings, SquarePen, Trash2 } from "lucide-react";
+import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Link } from "react-router-dom";
@@ -30,6 +28,8 @@ export default function SettingPost({
   isOwner: boolean;
   handleDelete: () => Promise<void>;
 }) {
+  if (!isOwner) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="outline-none" asChild>
@@ -42,57 +42,43 @@ export default function SettingPost({
         side="right"
         align="start"
         sideOffset={4}>
-        <DropdownMenuLabel className="p-0 font-normal"></DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {isOwner ? (
-            <Link to={`/post/${postId}/edit`}>
-              <DropdownMenuItem className="cursor-pointer">
-                <SquarePen />
-                Edit Post
-              </DropdownMenuItem>
-            </Link>
-          ) : null}
-
-          <Link to="/setting">
+          <Link to={`/post/${postId}/edit`}>
             <DropdownMenuItem className="cursor-pointer">
-              <Settings />
-              Settings
+              <SquarePen />
+              Edit Post
             </DropdownMenuItem>
           </Link>
+          <AlertDialog>
+            <AlertDialogTrigger className="w-full" asChild>
+              <DropdownMenuItem
+                className="focus:bg-destructive focus:text-white"
+                onSelect={(e) => e.preventDefault()}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Are you absolutely sure to delete?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your post and remove your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-destructive hover:bg-destructive/90">
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </DropdownMenuGroup>
-        {isOwner ? (
-          <>
-            <DropdownMenuSeparator />
-            <AlertDialog>
-              <AlertDialogTrigger className="w-full" asChild>
-                <DropdownMenuItem
-                  className="focus:bg-red-500 focus:text-white"
-                  onSelect={(e) => e.preventDefault()}>
-                  <Trash2 />
-                  Delete
-                </DropdownMenuItem>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Are you absolutely sure to delete?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your post and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete}>
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
-        ) : null}
       </DropdownMenuContent>
     </DropdownMenu>
   );

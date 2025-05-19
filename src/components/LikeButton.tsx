@@ -14,9 +14,11 @@ import RenderList from "./others/RenderList";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
 import { Skeleton } from "./ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export function LikeButton({ postId }: { postId: string }) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
   const fetchIsLiked = async () => {
@@ -27,7 +29,7 @@ export function LikeButton({ postId }: { postId: string }) {
       .select("user_id")
       .eq("post_id", postId)
       .eq("user_id", user.id)
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== "PGRST116") {
       // Error selain "No rows found" (kode: PGRST116)
@@ -44,7 +46,12 @@ export function LikeButton({ postId }: { postId: string }) {
 
   const toggleLike = async () => {
     if (!user) {
-      alert("You must be logged in to like a post!");
+      toast({
+        title: "Gagal menyukai postingan ini",
+        description:
+          "Anda harus login terlebih dahulu untuk menyukai postingan!",
+        duration: 5000,
+      });
       return;
     }
 
@@ -136,7 +143,7 @@ export function ViewLikes({ postId }: { postId: string }) {
       <DrawerTrigger asChild>
         <span
           onClick={fetchLikes}
-          className="text-xs underline hover:text-primary-500 cursor-pointer select-none">
+          className="text-xs underline hover:text-primary cursor-pointer select-none">
           view who likes
         </span>
       </DrawerTrigger>

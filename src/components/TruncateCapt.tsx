@@ -10,7 +10,7 @@ export default function TruncateCapt({ children }: { children: ReactNode }) {
       const lineHeight = parseFloat(
         getComputedStyle(textRef.current).lineHeight
       );
-      const maxHeight = lineHeight * 5; // Maksimal tinggi untuk 4 baris
+      const maxHeight = lineHeight * 5;
       const actualHeight = textRef.current.scrollHeight;
       if (actualHeight > maxHeight) {
         setIsTruncated(true);
@@ -28,7 +28,7 @@ export default function TruncateCapt({ children }: { children: ReactNode }) {
       {isTruncated && (
         <button
           onClick={() => setIsVisibleFullText(!isVisibleFullText)}
-          className="text-secondary-500 select-none hover:text-primary-500">
+          className="text-muted-foreground select-none hover:text-primary">
           {isVisibleFullText ? "...less" : "more..."}
         </button>
       )}

@@ -171,33 +171,35 @@ export default function CommentButton({ postId }: { postId: string }) {
             )}
           </div>
           <DrawerFooter>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(addComment)}>
-                <div className="flex items-center gap-3 px-2 pt-2 border-t border-secondary-200">
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormMessage />
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            className="w-full min-h-10 max-h-36 border p-1 ps-2 rounded-sm resize-y"
-                            placeholder="Send new comment...."
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="submit"
-                    className="size-10 bg-primary-500 rounded-full">
-                    <Send className="size-5 text-white" />
-                  </Button>
-                </div>
-              </form>
-            </Form>
+            {user ? (
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(addComment)}>
+                  <div className="flex items-center gap-3 px-2 pt-2 border-t border-border">
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormMessage />
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              className="w-full min-h-10 max-h-36 border p-1 ps-2 rounded-sm resize-y"
+                              placeholder="Send new comment...."
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      className="size-10 bg-primary rounded-full dark:bg-primary dark:hover:bg-primary/90">
+                      <Send className="size-5 text-primary-foreground" />
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            ) : null}
           </DrawerFooter>
         </div>
       </DrawerContent>

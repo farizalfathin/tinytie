@@ -29,7 +29,7 @@ export const useTheme = () => {
   return context;
 };
 
-export function ThemeProvider({
+export default function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "vite-ui-theme",

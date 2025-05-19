@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Focus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid";
@@ -138,130 +139,145 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="flex justify-center shrink-0 ease-linear">
-      <div className="w-[468px] min-h-screen border border-secondary-200">
-        {!user ? (
-          <>
-            <div className="flex items-center justify-center py-3 border-b border-secondary-200">
-              <Skeleton className="w-36 h-6" />
-            </div>
-            <div className="py-6">
-              <Skeleton className="h-24 w-24 rounded-full mb-4 mx-auto" />
-              <div className="flex flex-col items-center gap-2">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="w-full max-w-sm flex flex-col gap-2 mx-auto">
-                    <Skeleton className="w-12 h-4 rounded" />
-                    <Skeleton className="w-full h-8 rounded" />
-                  </div>
-                ))}
+    <>
+      <Helmet>
+        <title>Edit Profile | TinyTie</title>
+        <meta
+          name="description"
+          content="Edit profil akun TinyTie Anda dengan nama, username, bio, dan avatar baru."
+        />
+        <meta property="og:title" content="Edit Profile | TinyTie" />
+        <meta
+          property="og:description"
+          content="Edit profil akun TinyTie Anda dengan nama, username, bio, dan avatar baru."
+        />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div className="flex-1 flex justify-center shrink-0 ease-linear">
+        <section className="w-full h-full border border-b-0 border-border">
+          {!user ? (
+            <>
+              <div className="flex items-center justify-center py-3 border-b border-border">
+                <Skeleton className="w-36 h-6" />
               </div>
-            </div>
-          </>
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleUpdateProfile)}>
-              <div className="py-3 border-b border-secondary-200">
-                <h1 className="text-lg font-semibold text-center">
-                  Edit Profile
-                </h1>
-              </div>
-              <div className="w-full max-w-sm mx-auto py-6">
-                <div className="relative w-24 h-24 mx-auto mb-1">
-                  <img
-                    className="w-full aspect-square rounded-full"
-                    src={previewAvatar}
-                    alt=""
-                  />
-                  <FormField
-                    control={form.control}
-                    name="avatar_url"
-                    render={({ field }) => (
-                      <FormItem className="absolute bottom-0 right-0">
-                        <FormControl>
-                          <div className="flex items-center">
-                            <Input
-                              id="avatar"
-                              type="file"
-                              accept="image/jpeg"
-                              className="hidden"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  field.onChange(file); // Set file value in the form
-                                  setPreviewAvatar(URL.createObjectURL(file)); // Update preview avatar
-                                }
-                              }}
-                            />
-                            <Label
-                              htmlFor="avatar"
-                              className="p-1 bg-primary-500 border-2 border-white rounded-full cursor-pointer">
-                              <Focus className="size-5 text-white" />
-                            </Label>
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(
-                              e.currentTarget.value.replace(/\s+/g, "_")
-                            );
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <RenderList
-                  of={[
-                    { name: "full_name", label: "Fullname" },
-                    { name: "bio", label: "Bio" },
-                  ]}
-                  render={(item: { name: any; label: string }, index) => (
-                    <FormField
+              <div className="py-6">
+                <Skeleton className="h-24 w-24 rounded-full mb-4 mx-auto" />
+                <div className="flex flex-col items-center gap-2">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <div
                       key={index}
+                      className="w-full max-w-sm flex flex-col gap-2 mx-auto">
+                      <Skeleton className="w-12 h-4 rounded" />
+                      <Skeleton className="w-full h-8 rounded" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleUpdateProfile)}>
+                <div className="py-3 border-b border-border">
+                  <h1 className="text-lg font-semibold text-center">
+                    Edit Profile
+                  </h1>
+                </div>
+                <div className="w-full max-w-sm mx-auto py-6 px-4">
+                  <div className="relative w-24 h-24 mx-auto mb-1">
+                    <img
+                      className="w-full aspect-square rounded-full"
+                      src={previewAvatar}
+                      alt=""
+                    />
+                    <FormField
                       control={form.control}
-                      name={item.name}
+                      name="avatar_url"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{item.label}</FormLabel>
+                        <FormItem className="absolute bottom-0 right-0">
                           <FormControl>
-                            <Input type="text" {...field} />
+                            <div className="flex items-center">
+                              <Input
+                                id="avatar"
+                                type="file"
+                                accept="image/jpeg"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    field.onChange(file); // Set file value in the form
+                                    setPreviewAvatar(URL.createObjectURL(file)); // Update preview avatar
+                                  }
+                                }}
+                              />
+                              <Label
+                                htmlFor="avatar"
+                                className="p-1 bg-primary border-2 border-white rounded-full cursor-pointer dark:border-zinc-950">
+                                <Focus className="size-5 text-white" />
+                              </Label>
+                            </div>
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
-                  )}
-                />
-                <Button
-                  type="submit"
-                  disabled={isDisabled}
-                  className={cn(
-                    "bg-primary-500 text-white px-2 py-1 rounded-md mt-4 hover:bg-primary-600",
-                    isDisabled && "opacity-70 cursor-not-allowed"
-                  )}>
-                  Simpan
-                </Button>
-              </div>
-            </form>
-          </Form>
-        )}
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(
+                                e.currentTarget.value.replace(/\s+/g, "_")
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <RenderList
+                    of={[
+                      { name: "full_name", label: "Fullname" },
+                      { name: "bio", label: "Bio" },
+                    ]}
+                    render={(item: { name: any; label: string }, index) => (
+                      <FormField
+                        key={index}
+                        control={form.control}
+                        name={item.name}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{item.label}</FormLabel>
+                            <FormControl>
+                              <Input type="text" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isDisabled}
+                    className={cn(
+                      "bg-primary-500 text-white px-2 py-1 rounded-md mt-4 hover:bg-primary-600",
+                      isDisabled && "opacity-70 cursor-not-allowed"
+                    )}>
+                    Simpan
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          )}
+        </section>
       </div>
-    </div>
+    </>
   );
 }

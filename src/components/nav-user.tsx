@@ -1,7 +1,10 @@
-"use client";
-
-import { ChevronsUpDown, LogOut, Settings, UserRound } from "lucide-react";
-
+import {
+  ChevronsUpDown,
+  LogOut,
+  Settings,
+  UserCog,
+  UserRound,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -20,11 +23,23 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/authentication";
-import AvatarProfile from "./templates/AvatarProfile";
+import AvatarProfile from "./AvatarProfile";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
-export function NavUser() {
+export default function NavUser() {
   const { user, onLogout } = useAuth();
   const { isMobile } = useSidebar();
+  const isAdmin = user?.id === import.meta.env.VITE_ADMIN_ID;
 
   if (!user) return null;
 
@@ -49,7 +64,7 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg dark:bg-zinc-950/95"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}>
@@ -77,20 +92,51 @@ export function NavUser() {
                   Account
                 </DropdownMenuItem>
               </Link>
-              <Link to="/setting">
+              <Link to="/account/me/setting">
                 <DropdownMenuItem className="cursor-pointer">
                   <Settings />
                   Settings
                 </DropdownMenuItem>
               </Link>
+              {isAdmin ? (
+                <Link to="/admin/dashboard">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <UserCog />
+                    Admin Page
+                  </DropdownMenuItem>
+                </Link>
+              ) : null}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={onLogout}
-              className="focus:bg-red-500 focus:text-white">
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
+            <AlertDialog>
+              <AlertDialogTrigger className="w-full" asChild>
+                <DropdownMenuItem
+                  className="focus:bg-destructive focus:text-white"
+                  onSelect={(e) => e.preventDefault()}>
+                  <LogOut />
+                  Log out
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you absolutely sure to log out from your account?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will make you log out
+                    from your account and will not access your data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={onLogout}
+                    className="bg-destructive hover:bg-destructive/90">
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

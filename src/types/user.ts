@@ -1,6 +1,6 @@
 export type User = {
   id: string;
-  updated_at: string | null;
+  updated_at: Date;
   fallback: string;
   email: string;
   username: string;
