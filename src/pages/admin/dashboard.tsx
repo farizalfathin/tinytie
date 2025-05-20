@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/card";
 import { Users, LucideIcon, Image } from "lucide-react";
 import RenderList from "@/components/others/RenderList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface Data {
   text: string;
@@ -30,6 +31,39 @@ const defaultData: Data[] = [
 
 export default function Dashboard() {
   const [data, setData] = useState<Data[]>(defaultData);
+
+  const fetchData = async () => {
+    try {
+      const [users, posts] = await Promise.all([
+        supabase.from("users").select("*", { count: "exact" }),
+        supabase.from("posts").select("*", { count: "exact" }),
+      ]);
+
+      if (posts.error || users.error) {
+        throw new Error(`
+          error fetch posts: ${posts.error}\n
+          error fetch users: ${users.error}
+        `);
+      }
+
+      setData((prev) => [
+        {
+          ...prev[0],
+          count: users.data.length,
+        },
+        {
+          ...prev[1],
+          count: posts.data.length,
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="container mx-auto p-6">
