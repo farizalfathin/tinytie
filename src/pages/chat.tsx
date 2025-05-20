@@ -48,7 +48,9 @@ export default function Chat() {
         if (error) throw error;
 
         const uniqueUserIds = [
-          ...new Set(data.flatMap((msg) => [msg.sender_id, msg.receiver_id])),
+          ...new Set(
+            data.flatMap((msg) => [msg.following_user_id, msg.followed_user_id])
+          ),
         ].filter((id) => id !== user.id);
 
         if (uniqueUserIds.length === 0) return;
