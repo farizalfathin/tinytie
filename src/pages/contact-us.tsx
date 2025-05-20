@@ -33,7 +33,7 @@ export default function ContactUs() {
             <p>
               Bila ada pemasangan iklan & sponsor, endorsement, atau penawaran
               oportunitas bisnis lainnya bisa hubungi email kami:
-              loremipsum@tinytie.com
+              collaboration@tinytie.com
             </p>
           </div>
           <div className="mb-4">
@@ -46,8 +46,8 @@ export default function ContactUs() {
           <div className="mb-4">
             <h2 className="text-lg font-medium">Kontak Pribadi Developer</h2>
             <p>
-              Para pengguna Discord bisa gabung ke server official Lahelu agar
-              mempermudah komunikasi: https://discord.gg/lahelu
+              Para pengguna Discord bisa gabung ke server official TinyTie agar
+              mempermudah komunikasi: https://discord.gg/tinytie
             </p>
           </div>
         </section>
