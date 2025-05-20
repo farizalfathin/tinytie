@@ -41,9 +41,9 @@ export default function Chat() {
         if (!user) return;
 
         const { data, error } = await supabase
-          .from("messages")
-          .select("sender_id, receiver_id")
-          .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
+          .from("followings")
+          .select("following_user_id, followed_user_id")
+          .or(`following_user_id.eq.${user.id},followed_user_id.eq.${user.id}`);
 
         if (error) throw error;
 
