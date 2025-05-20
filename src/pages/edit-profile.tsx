@@ -14,7 +14,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/authentication";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Focus } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -266,10 +265,7 @@ export default function EditProfile() {
                   <Button
                     type="submit"
                     disabled={isDisabled}
-                    className={cn(
-                      "bg-primary-500 text-white px-2 py-1 rounded-md mt-4 hover:bg-primary-600",
-                      isDisabled && "opacity-70 cursor-not-allowed"
-                    )}>
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 px-2 py-1 rounded-md mt-4">
                     Simpan
                   </Button>
                 </div>
