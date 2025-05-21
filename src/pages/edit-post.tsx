@@ -19,9 +19,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/authentication";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet-async";
+import { Button } from "@/components/ui/button";
 
 const editPostFormSchema = z.object({
   caption: z.string().min(8, "caption minimal harus 8 karakter"),
@@ -207,7 +207,7 @@ export default function EditPost() {
                               {field.value.map((tag, index) => (
                                 <div
                                   key={index}
-                                  className="flex items-center text-sm ps-2 pe-1 py-1 gap-2 rounded-full bg-primary-100">
+                                  className="flex items-center text-sm ps-2 pe-1 py-1 gap-2 rounded-full bg-primary text-primary-foreground">
                                   <span>{tag}</span>
                                   <button
                                     type="button"
@@ -271,15 +271,12 @@ export default function EditPost() {
                     </div>
                   </div>
                 </div>
-                <button
+                <Button
                   type="submit"
                   disabled={isDisabled}
-                  className={cn(
-                    "bg-gradient-to-br from-primary-500 to-primary-400 text-white px-3 py-1 rounded-md mt-4 hover:from-primary-400 hover:to-primary-500",
-                    isDisabled && "opacity-70 cursor-not-allowed"
-                  )}>
+                  className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90">
                   Unggah
-                </button>
+                </Button>
               </div>
             </form>
           </Form>

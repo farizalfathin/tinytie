@@ -91,7 +91,7 @@ export default function FollowButton({
   ) : (
     <div className="flex items-center gap-2 mt-4">
       <Link
-        to="/chat"
+        to={`/chat?id=${userIdFollowed}`}
         className="px-4 py-2 bg-secondary text-secondary-foreground rounded text-sm font-medium hover:bg-secondary/75">
         Kirim Pesan
       </Link>

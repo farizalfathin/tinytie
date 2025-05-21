@@ -143,7 +143,7 @@ export function ViewLikes({ postId }: { postId: string }) {
       <DrawerTrigger asChild>
         <span
           onClick={fetchLikes}
-          className="text-xs underline hover:text-primary cursor-pointer select-none">
+          className="text-xs hover:underline cursor-pointer select-none">
           view who likes
         </span>
       </DrawerTrigger>
@@ -163,7 +163,7 @@ export function ViewLikes({ postId }: { postId: string }) {
                 of={likes}
                 render={(item: UserRelation, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <Avatar className="h-9 w-9 rounded-full border border-primary-300">
+                    <Avatar className="h-9 w-9 rounded-full border">
                       <AvatarImage src={item.avatar_url} alt={item.username} />
                       <AvatarFallback className="rounded-full">
                         {item.fallback}
@@ -171,7 +171,7 @@ export function ViewLikes({ postId }: { postId: string }) {
                     </Avatar>
                     <Link
                       to={`/account/${item.id}`}
-                      className="text-sm underline hover:text-primary-500">
+                      className="text-sm hover:underline">
                       {item.username}
                     </Link>
                   </div>

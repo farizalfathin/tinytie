@@ -16,18 +16,9 @@ import RenderList from "./others/RenderList";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
 import { Skeleton } from "./ui/skeleton";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
-import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-
-const addCommentFormSchema = z.object({
-  message: z.string().min(5, "pesan komentar minimal 5 karakter"),
-});
-
-type AddCommentFormSchema = z.infer<typeof addCommentFormSchema>;
+import EmojiPicker from "./others/EmojiPicker";
+import InputText from "./others/InputText";
 
 export default function CommentButton({ postId }: { postId: string }) {
   const { user } = useAuth();
@@ -35,12 +26,7 @@ export default function CommentButton({ postId }: { postId: string }) {
     "loading"
   );
   const [comments, setComments] = useState<Comment[]>([]);
-  const form = useForm<AddCommentFormSchema>({
-    resolver: zodResolver(addCommentFormSchema),
-    defaultValues: {
-      message: "",
-    },
-  });
+  const [newComment, setNewComment] = useState<string>("");
 
   const fetchComments = async () => {
     setStatus("loading");
@@ -75,13 +61,13 @@ export default function CommentButton({ postId }: { postId: string }) {
     setStatus("success");
   };
 
-  const addComment = async (data: AddCommentFormSchema) => {
-    if (!user) return;
+  const addComment = async () => {
+    if (!user || newComment.length === 0) return;
 
-    const newComment = {
+    const newCommentOps = {
       id: `optimistic-${Date.now()}`,
       created_at: "baru saja",
-      message: data.message,
+      message: newComment,
       users: {
         ...user,
         fallback: user.full_name
@@ -90,21 +76,21 @@ export default function CommentButton({ postId }: { postId: string }) {
           .join(""),
       },
     };
-    setComments((prev) => [newComment, ...prev]);
+    setComments((prev) => [newCommentOps, ...prev]);
 
     const { error } = await supabase.from("comments").insert({
       user_id: user.id,
-      message: data.message,
+      message: newComment,
       post_id: postId,
     });
 
     if (error) {
       console.error("Error posting comment:", error);
-      setComments((prev) => prev.filter((c) => c.id !== newComment.id));
+      setComments((prev) => prev.filter((c) => c.id !== newCommentOps.id));
       return;
     }
 
-    form.reset();
+    setNewComment("");
   };
 
   return (
@@ -142,10 +128,10 @@ export default function CommentButton({ postId }: { postId: string }) {
                     <div className="flex flex-col">
                       <Link
                         to={`/account/${item.users.id}`}
-                        className="text-sm underline hover:text-primary-500">
+                        className="text-sm hover:underline">
                         {item.users.username}
                       </Link>
-                      <p className="text-secondary-700 leading-tight">
+                      <p className="leading-tight whitespace-pre-line">
                         {item.message}
                       </p>
                     </div>
@@ -172,33 +158,20 @@ export default function CommentButton({ postId }: { postId: string }) {
           </div>
           <DrawerFooter>
             {user ? (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(addComment)}>
-                  <div className="flex items-center gap-3 px-2 pt-2 border-t border-border">
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormMessage />
-                          <FormControl>
-                            <Textarea
-                              {...field}
-                              className="w-full min-h-10 max-h-36 border p-1 ps-2 rounded-sm resize-y"
-                              placeholder="Send new comment...."
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="size-10 bg-primary rounded-full dark:bg-primary dark:hover:bg-primary/90">
-                      <Send className="size-5 text-primary-foreground" />
-                    </Button>
-                  </div>
-                </form>
-              </Form>
+              <div className="relative flex items-center gap-3 px-2 pt-2 border-t border-border">
+                <EmojiPicker onChange={setNewComment} />
+                <InputText
+                  value={newComment}
+                  onChange={setNewComment}
+                  placeholder="Ketik pesan..."
+                />
+                <Button
+                  type="button"
+                  className="size-10 bg-primary rounded-full dark:bg-primary dark:hover:bg-primary/90"
+                  onClick={addComment}>
+                  <Send className="size-5 text-primary-foreground" />
+                </Button>
+              </div>
             ) : null}
           </DrawerFooter>
         </div>

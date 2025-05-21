@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,11 @@ import { Send, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/authentication";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { formatTime } from "@/utils/format";
 import { useIsMobile } from "@/hooks/use-mobile";
+import InputText from "@/components/others/InputText";
+import EmojiPicker from "@/components/others/EmojiPicker";
 
 interface Message {
   id: string;
@@ -30,9 +32,11 @@ interface ChatUser {
 export default function Chat() {
   const { user } = useAuth();
   const [chats, setChats] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState<string>("");
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
+  const [searchUser, setSearchUser] = useState<string>("");
   const [selectedChat, setSelectedChat] = useState<ChatUser | null>(null);
+  const [params, setParams] = useSearchParams();
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -146,22 +150,43 @@ export default function Chat() {
     }
   };
 
+  const filterUsers = useMemo(() => {
+    if (searchUser.length > 0)
+      return chatUsers.filter((user) => {
+        return user.full_name
+          .toLowerCase()
+          .startsWith(searchUser.toLowerCase());
+      });
+
+    return chatUsers;
+  }, [searchUser, chatUsers]);
+
+  useEffect(() => {
+    if (params.get("id"))
+      setSelectedChat(chatUsers.find((u) => u.id === params.get("id")) || null);
+  }, [params, chatUsers]);
+
   return (
     <div className={cn("flex h-full", !isMobile && "h-screen")}>
-      {/* Sidebar Chat List */}
       {(isMobile && !selectedChat) || !isMobile ? (
         <aside
           className={cn(
-            "border-r border-sidebar-border pt-5",
+            "border-r border-sidebar-border pt-4",
             isMobile ? "w-full" : "w-1/3"
           )}>
           <h2 className="text-xl font-semibold mb-4 ms-4">Chats</h2>
-          <ScrollArea className="h-[calc(100vh-80px)]">
-            {chatUsers.map((user, index) => (
+          <Input
+            type="text"
+            placeholder="Search..."
+            className="max-w-[90%] mx-auto"
+            onChange={(e) => setSearchUser(e.target.value)}
+          />
+          <ScrollArea className="mt-4 h-[calc(100vh-112px)]">
+            {filterUsers.map((user, index) => (
               <div
                 key={index}
-                onClick={() => setSelectedChat(user)}
-                className={`p-3 cursor-pointer ${
+                onClick={() => setParams({ id: user.id })}
+                className={`px-4 py-2 cursor-pointer ${
                   selectedChat?.id === user.id ? "bg-secondary" : ""
                 }`}>
                 <div className="flex items-center gap-2">
@@ -179,7 +204,6 @@ export default function Chat() {
         </aside>
       ) : null}
 
-      {/* Main Chat Area */}
       {(isMobile && selectedChat) || !isMobile ? (
         <main className={cn("flex flex-col", isMobile ? "w-full" : "w-2/3")}>
           {selectedChat ? (
@@ -204,7 +228,7 @@ export default function Chat() {
                 </Avatar>
                 <Link
                   to={"/account/" + selectedChat.id}
-                  className="hover:text-primary-500">
+                  className="hover:text-primary">
                   {selectedChat.full_name}
                 </Link>
               </header>
@@ -223,7 +247,7 @@ export default function Chat() {
                         msg.sender_id === user?.id &&
                           "bg-primary text-primary-foreground items-end"
                       )}>
-                      <p>{msg.content}</p>
+                      <p className="whitespace-pre-line">{msg.content}</p>
                       <span
                         className={cn(
                           "text-xs text-secondary-500",
@@ -237,13 +261,12 @@ export default function Chat() {
                 ))}
               </ScrollArea>
 
-              {/* Input Chat */}
-              <footer className="p-4 border-t border-sidebar-border flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="Ketik pesan..."
+              <footer className="relative p-4 border-t border-sidebar-border flex gap-2">
+                <EmojiPicker onChange={setNewMessage} />
+                <InputText
                   value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
+                  onChange={setNewMessage}
+                  placeholder="Ketik pesan..."
                   className="flex-1"
                 />
                 <Button onClick={sendMessage}>

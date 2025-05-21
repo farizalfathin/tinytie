@@ -86,7 +86,7 @@ export function Posting({
         <div className="flex flex-col">
           <Link
             to={users.id === user?.id ? "/account/me" : `/account/${users.id}`}
-            className="text-sm select-none hover:text-primary hover:underline">
+            className="text-sm select-none hover:underline">
             {users.username}
           </Link>
           <span className="text-[10px] text-muted-foreground">
@@ -118,17 +118,13 @@ export function Posting({
               to={
                 users.id === user?.id ? "/account/me" : `/account/${users.id}`
               }
-              className="font-semibold select-none me-1 hover:text-primary hover:underline">
+              className="font-semibold select-none me-1 hover:underline">
               {users.username}
             </Link>
             {caption}
           </TruncateCapt>
-          <div className="flex gap-2 mt-2">
-            {tag?.map((t, i) => (
-              <span key={i} className="text-sm text-primary underline">
-                #{t}
-              </span>
-            ))}
+          <div className="flex mt-2 text-primary text-sm">
+            {tag?.map((t) => `#${t} `)}
           </div>
         </div>
       </div>
