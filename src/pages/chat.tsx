@@ -12,6 +12,7 @@ import { formatTime } from "@/utils/format";
 import { useIsMobile } from "@/hooks/use-mobile";
 import InputText from "@/components/others/InputText";
 import EmojiPicker from "@/components/others/EmojiPicker";
+import RenderList from "@/components/others/RenderList";
 
 interface Message {
   id: string;
@@ -182,24 +183,27 @@ export default function Chat() {
             onChange={(e) => setSearchUser(e.target.value)}
           />
           <ScrollArea className="mt-4 h-[calc(100vh-112px)]">
-            {filterUsers.map((user, index) => (
-              <div
-                key={index}
-                onClick={() => setParams({ id: user.id })}
-                className={`px-4 py-2 cursor-pointer ${
-                  selectedChat?.id === user.id ? "bg-secondary" : ""
-                }`}>
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8 rounded-full">
-                    <AvatarImage src={user.avatar_url} alt={user.username} />
-                    <AvatarFallback className="rounded-full text-xs">
-                      {user.fallback}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="">{user.full_name}</span>
+            <RenderList
+              of={filterUsers}
+              render={(user, index) => (
+                <div
+                  key={index}
+                  onClick={() => setParams({ id: user.id })}
+                  className={`px-4 py-2 cursor-pointer ${
+                    selectedChat?.id === user.id ? "bg-secondary" : ""
+                  }`}>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8 rounded-full">
+                      <AvatarImage src={user.avatar_url} alt={user.username} />
+                      <AvatarFallback className="rounded-full text-xs">
+                        {user.fallback}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="">{user.full_name}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )}
+            />
           </ScrollArea>
         </aside>
       ) : null}

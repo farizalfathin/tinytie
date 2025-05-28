@@ -45,7 +45,7 @@ export default function UsersTable() {
         );
 
         if (error) throw error;
-        console.log(data);
+
         setUsers(
           data.map((item) => {
             return {
